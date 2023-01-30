@@ -4,7 +4,7 @@
 EmployeeController is a Java class for handling employee related actions and interactions with the front-end. It communicates with the EmployeeService to handle all employee operations like adding a new employee, updating an employee, deleting an employee, searching for an employee, and displaying a list of employees.
 
 ## Functions
-*viewHomePage()* - returns a list of employees on the home page.
+**viewHomePage()** - returns a list of employees on the home page.
 
 **showNewEmployeeForm()** - returns the form for creating a new employee.
 
@@ -20,3 +20,5 @@ EmployeeController is a Java class for handling employee related actions and int
 
 ## Usage
 This class can be used in a web application for managing employee data. The front-end can make HTTP requests to the endpoints defined in the EmployeeController class to perform operations on the employee data.
+
+
