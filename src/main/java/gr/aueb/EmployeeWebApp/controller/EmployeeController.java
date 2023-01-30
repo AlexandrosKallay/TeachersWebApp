@@ -106,7 +106,7 @@ public class EmployeeController {
      * @return A list of employees
      */
     @GetMapping("/search")
-    public String home(Model model, @RequestParam("keyword") String keyword) {
+    public String search(Model model, @RequestParam("keyword") String keyword) {
         List<Employee> listEmployees;
         if (Objects.requireNonNull(keyword).isEmpty()) {
             return "redirect:/";
