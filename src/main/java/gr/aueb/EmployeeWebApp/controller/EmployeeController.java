@@ -1,10 +1,14 @@
-package gr.aueb.TeachersWebApp.controller;
+package gr.aueb.EmployeeWebApp.controller;
 
-import gr.aueb.TeachersWebApp.model.Employee;
-import gr.aueb.TeachersWebApp.service.EmployeeService;
+import gr.aueb.EmployeeWebApp.model.Employee;
+import gr.aueb.EmployeeWebApp.service.EmployeeService;
+import gr.aueb.EmployeeWebApp.service.Exceptions.EmployeeIdAlreadyExistsException;
+import gr.aueb.EmployeeWebApp.service.Exceptions.EmployeeNameMustNotBeNullException;
+import gr.aueb.EmployeeWebApp.service.Exceptions.EmployeeNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +19,7 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
+    // A constructor that takes in an EmployeeService object and sets it to the employeeService variable.
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
@@ -33,7 +38,7 @@ public class EmployeeController {
      * @return The new_employee.html file
      */
     @GetMapping("/showNewEmployeeForm")
-    public String showNewEmployeeForm(Model model) {
+    public String showNewEmployeeForm(ModelMap model) {
         // create model attribute to bind form data
         Employee employee = new Employee();
         model.addAttribute("employee", employee);
@@ -49,7 +54,11 @@ public class EmployeeController {
     @PostMapping("/saveEmployee")
     public String saveEmployee(@ModelAttribute("employee") Employee employee) {
         // save employee to database
-        employeeService.saveEmployee(employee);
+        try {
+            employeeService.saveEmployee(employee);
+        } catch (EmployeeIdAlreadyExistsException | EmployeeNotFoundException | EmployeeNameMustNotBeNullException e) {
+            e.printStackTrace();
+        }
         return "redirect:/";
     }
 
@@ -57,7 +66,7 @@ public class EmployeeController {
      * We're getting the employee from the service, and then setting the employee as a model attribute to pre-populate the
      * form
      *
-     * @param id The id of the employee to be updated.
+     * @param id    The id of the employee to be updated.
      * @param model This is the model object that will be used to render the view.
      * @return A String
      */
@@ -92,16 +101,16 @@ public class EmployeeController {
      * The function takes in a keyword, and if the keyword is empty, it redirects to the home page. If the keyword is not
      * empty, it searches for the keyword and returns the results
      *
-     * @param model The model is an object that contains all the data that will be displayed on the view page.
+     * @param model   The model is an object that contains all the data that will be displayed on the view page.
      * @param keyword the name of the parameter in the URL.
      * @return A list of employees
      */
     @GetMapping("/search")
     public String home(Model model, @RequestParam("keyword") String keyword) {
         List<Employee> listEmployees;
-        if(Objects.requireNonNull(keyword).isEmpty()) {
+        if (Objects.requireNonNull(keyword).isEmpty()) {
             return "redirect:/";
-        }else {
+        } else {
             listEmployees = employeeService.getByKeyword(keyword);
         }
         model.addAttribute("listEmployees", listEmployees);
@@ -112,10 +121,10 @@ public class EmployeeController {
     /**
      * It returns a list of employees for a given page number, page size, sort field and sort direction
      *
-     * @param pageNo The page number to be displayed.
+     * @param pageNo    The page number to be displayed.
      * @param sortField The field name to sort by.
-     * @param sortDir The direction of the sorting. It can be either asc or desc.
-     * @param model The model object that will be used to render the view.
+     * @param sortDir   The direction of the sorting. It can be either asc or desc.
+     * @param model     The model object that will be used to render the view.
      * @return A list of employees.
      */
     @GetMapping("/page/{pageNo}")
@@ -125,8 +134,8 @@ public class EmployeeController {
                                 Model model) {
         int pageSize = 5;
 
-        Page < Employee > page = employeeService.findPaginated(pageNo, pageSize, sortField, sortDir);
-        List < Employee > listEmployees = page.getContent();
+        Page<Employee> page = employeeService.findPaginated(pageNo, pageSize, sortField, sortDir);
+        List<Employee> listEmployees = page.getContent();
 
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", page.getTotalPages());

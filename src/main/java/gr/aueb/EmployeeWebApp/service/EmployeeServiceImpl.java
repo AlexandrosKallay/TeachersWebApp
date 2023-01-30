@@ -1,8 +1,8 @@
-package gr.aueb.TeachersWebApp.service;
+package gr.aueb.EmployeeWebApp.service;
 
-import gr.aueb.TeachersWebApp.dao.EmployeeDAO;
-import gr.aueb.TeachersWebApp.model.Employee;
-import org.springframework.beans.factory.annotation.Autowired;
+import gr.aueb.EmployeeWebApp.dao.EmployeeDAO;
+import gr.aueb.EmployeeWebApp.model.Employee;
+import gr.aueb.EmployeeWebApp.service.Exceptions.EmployeeNameMustNotBeNullException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +37,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void saveEmployee(Employee employee) {
+    public void saveEmployee(Employee employee) throws EmployeeNameMustNotBeNullException {
+
+        if (employee.getFirstName().isEmpty() && employee.getLastName().isEmpty()) {
+            throw new EmployeeNameMustNotBeNullException();
+        }
         this.employeeRepository.save(employee);
     }
 
@@ -73,9 +77,9 @@ public class EmployeeServiceImpl implements EmployeeService {
      * We are creating a Pageable object with the page number, page size, and sort direction and then passing it to the
      * findAll() method of the EmployeeRepository interface
      *
-     * @param pageNo The page number to be returned.
-     * @param pageSize The number of records to be fetched in a page.
-     * @param sortField The field on which the sorting is to be performed.
+     * @param pageNo        The page number to be returned.
+     * @param pageSize      The number of records to be fetched in a page.
+     * @param sortField     The field on which the sorting is to be performed.
      * @param sortDirection This is the direction of the sort. It can be either ascending or descending.
      * @return A Page object.
      */
@@ -94,7 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param keyword The keyword to search for.
      * @return A list of employees
      */
-    public List<Employee> getByKeyword(String keyword){
+    public List<Employee> getByKeyword(String keyword) {
         return employeeRepository.findByKeyword(keyword);
     }
 }

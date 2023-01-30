@@ -1,13 +1,13 @@
-package gr.aueb.TeachersWebApp;
+package gr.aueb.EmployeeWebApp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TeachersWebAppApplicationTests {
+class EmployeesWebAppApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
